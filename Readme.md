@@ -1,3 +1,7 @@
+# grunt-webfont-neo
+
+This is a fork of [grunt-webfont](https://github.com/sapegin/grunt-webfont) that aims to keep the dependencies up-to-date and take advantage of new features in the dependencies.
+
 # SVG to webfont converter for Grunt
 
 [![Powered by You](http://sapegin.github.io/powered-by-you/badge.svg)](http://sapegin.github.io/powered-by-you/)
@@ -87,7 +91,6 @@ There are two font rendering engines available. See also `engine` option below.
 #### Cons
 
 * Doesn’t work [with some SVG files](https://github.com/fontello/svg2ttf/issues/25).
-* Ligatures aren’t supported.
 
 
 ## Configuration
