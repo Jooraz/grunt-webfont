@@ -151,17 +151,15 @@ module.exports = function(o, allDone) {
 			function streamSVGO(name, file) {
 				var svg = fs.readFileSync(file, 'utf8');
 				var svgo = new SVGO();
-				try {
-					svgo.optimize(svg, function(res) {
-						var stream = new MemoryStream(res.data, {
-							writable: false
-						});
-						fileStreamed(name, stream);
+				svgo.optimize(svg).then((res) => {
+					var stream = new MemoryStream(res.data, {
+						writable: false
 					});
-				} catch(err) {
+					fileStreamed(name, stream);
+				}).catch((err) => {
 					logger.error('Can’t simplify SVG file with SVGO.\n\n' + err);
 					fileDone(err);
-				}
+				});
 			}
 
 			var idx = files.indexOf(file);
