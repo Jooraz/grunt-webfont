@@ -7,6 +7,11 @@ var grunt = require('grunt');
 var parseXMLString = require('xml2js').parseString;
 var wf = require('../tasks/util/util');
 
+function search(haystack, needle) {
+	var toFind = new RegExp(needle,'g');
+	return haystack.match(toFind).length > 0;
+}
+
 function find(haystack, needle) {
 	return haystack.indexOf(needle) !== -1;
 }
@@ -422,8 +427,8 @@ exports.webfont = {
 		svgs.forEach(function(file) {
 			var id = path.basename(file, '.svg');
 			test.ok(
-				find(less, '.icon_' + id + ' {\n\t&:before'),
-				'LESS Mixin ' + id + ' should be in CSS file.'
+				search(less, `.icon_${id} {(\r){0,1}\n\t&:before {`),
+				`LESS Mixin ${id} should be in CSS file.`
 			);
 		});
 
@@ -612,8 +617,8 @@ exports.webfont = {
 		var html = grunt.file.read('test/tmp/template_options/icons.html');
 
 		test.ok(
-				find(less, '.glyph-icon {'),
-				'Class .glyph-icon should be in LESS file.'
+			find(less, '.glyph-icon {'),
+			'Class .glyph-icon should be in LESS file.'
 		);
 
 		// Every SVG file should have corresponding entry in LESS and HTML files
@@ -624,12 +629,12 @@ exports.webfont = {
 			// 		'Mixin .make-icon-' + id + ' should be in LESS file.'
 			// );
 			test.ok(
-					find(less, '.glyph_' + id + ' {'),
-					'Icon .glyph_' + id + ' should be in LESS file.'
+				find(less, '.glyph_' + id + ' {'),
+				'Icon .glyph_' + id + ' should be in LESS file.'
 			);
 			test.ok(
-					find(html, '<div class="icons__item" data-name="' + id + '"><i class="glyph-icon glyph_' + id + '"></i> glyph_' + id + '</div>'),
-					'Icon .glyph_' + id + ' should be in HTML file.'
+				find(html, '<div class="icons__item" data-name="' + id + '"><i class="glyph-icon glyph_' + id + '"></i> glyph_' + id + '</div>'),
+				'Icon .glyph_' + id + ' should be in HTML file.'
 			);
 		});
 
@@ -722,7 +727,7 @@ exports.webfont = {
 		var optimizedPathSegment = '280.2V280.098C349.867 293.072 358.595';
 		var svg	= grunt.file.read('test/tmp/optimize_enabled/icons.svg');
 		if(svg.indexOf(optimizedPathSegment) === -1) {
-				test.fail(true, 'SVG element must be contains the optimized path');
+			test.fail(true, 'SVG element must be contains the optimized path');
 		}
 		test.done();
 	},
@@ -730,8 +735,8 @@ exports.webfont = {
 	optimize_disabled: function(test){
 		var optimizedPathSegment = '280.2V280.098C349.867 293.072 358.595';
 		var svg	= grunt.file.read('test/tmp/optimize_disabled/icons.svg');
-	 	if(svg.indexOf(optimizedPathSegment) > -1) {
-				test.fail(true, 'SVG element must be contains the un-optimized path');
+		if(svg.indexOf(optimizedPathSegment) > -1) {
+			test.fail(true, 'SVG element must be contains the un-optimized path');
 		}
 		test.done();
 	},

@@ -19,7 +19,7 @@ module.exports = function(o, allDone) {
 	var svg2ttf = require('svg2ttf');
 	var ttf2woff = require('ttf2woff');
 	var ttf2eot = require('ttf2eot');
-	var SVGO = require('svgo');
+	var { optimize } = require('svgo');
 	var MemoryStream = require('memorystream');
 	var logger = o.logger || require('winston');
 	var wf = require('../util/util');
@@ -105,6 +105,7 @@ module.exports = function(o, allDone) {
 		steps.push(createFontWriter(type));
 	});
 
+	console.log(o.types);
 	// Run!
 	async.waterfall(steps, allDone);
 
@@ -120,7 +121,9 @@ module.exports = function(o, allDone) {
 	function createFontWriter(type) {
 		return function(done) {
 			getFont(type, function(font) {
-				fs.writeFileSync(wf.getFontPath(o, type), font);
+				if (font) {
+					fs.writeFileSync(wf.getFontPath(o, type), font);
+				}
 				done();
 			});
 		};
@@ -150,16 +153,18 @@ module.exports = function(o, allDone) {
 
 			function streamSVGO(name, file) {
 				var svg = fs.readFileSync(file, 'utf8');
-				var svgo = new SVGO();
-				svgo.optimize(svg).then((res) => {
-					var stream = new MemoryStream(res.data, {
-						writable: false
-					});
-					fileStreamed(name, stream);
-				}).catch((err) => {
+				try {
+					var res = optimize(svg);
+					if (res) {
+						var stream = new MemoryStream(res.data, {
+							writable: false
+						});
+						fileStreamed(name, stream);
+					}
+				} catch (err) {
 					logger.error('Can’t simplify SVG file with SVGO.\n\n' + err);
 					fileDone(err);
-				});
+				}
 			}
 
 			var idx = files.indexOf(file);

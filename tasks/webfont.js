@@ -4,7 +4,6 @@
  * @requires ttfautohint
  * @author Artem Sapegin (http://sapegin.me)
  */
-
 module.exports = function(grunt) {
 	'use strict';
 
@@ -54,8 +53,9 @@ module.exports = function(grunt) {
 		 * Check for `dest` param on either target config or global options object
 		 */
 		if (_.isUndefined(params.dest) && _.isUndefined(options.dest)) {
-			logger.warn('Required property ' + [this.name, this.target, 'dest'].join('.')
-				+ ' or ' + [this.name, this.target, 'options.dest'].join('.') + ' missing.');
+			var property = [this.name, this.target, 'dest'].join('.');
+			var propertyOpts = [this.name, this.target, 'options.dest'].join('.');
+			logger.warn(`Required property ${property} or ${propertyOpts} missing.`);
 		}
 
 		if (options.skip) {
